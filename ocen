@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# configuration variables
+first_test=0
+last_test=3
+name='sum'
+
+g++ -std=c++11 $name.cpp -o $name
+
+total=$((last_test-first_test+1))
+wrong=0
+correct=0
+
+for i in $(seq $first_test $last_test);
+do
+	./$name < in/$name$i.in > program/$name$i.out
+	DIFF=$(diff -EZbwB program/$name$i.out out/$name$i.out)
+	if [ "$DIFF" != "" ]
+	then
+		echo "Wrong answer on test "$i
+		((wrong=wrong+1))
+	else
+		((correct=correct+1))
+	fi
+done
+
+if [ $wrong != "0" ]; then
+	echo -e "\e[31m"$wrong "/" $total " tests gave wrong answer"
+fi
+
+if [ $correct != "0" ]; then
+	echo -e "\e[92m"$correct "/" $total "tests passed successfully"
+fi
